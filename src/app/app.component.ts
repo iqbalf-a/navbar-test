@@ -1,13 +1,24 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
+import { NavbarComponent } from './navbar/navbar.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [NavbarComponent, RouterOutlet, CommonModule],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'navbar-test';
+  showNavbar = true;
+
+  constructor(private router: Router) {
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        // Hide navbar on specific routes
+        this.showNavbar = !['/404', '/some-other-page'].includes(event.urlAfterRedirects);
+      }
+    });
+  }
 }
